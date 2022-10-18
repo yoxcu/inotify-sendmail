@@ -10,7 +10,7 @@ from datetime import datetime
 #---------------------------------------------------------
 
 #script settings
-monitorPath=sys.argv[1]
+monitorPath=sys.argv[1].rstrip("/")
 oldScanPath=monitorPath+"/.oldScan"
 
 #email server settings
@@ -44,8 +44,9 @@ htmlRowFormat="""<tr>
 </tr>"""
 
 #misc settings
-debug=True
+debug=False
 sendMailOnFirst=False
+exclude=["@eaDir"] #search for "string" in path and exclude if found
 
 #Do Not Modify
 #---------------------------------------------------------
@@ -96,9 +97,11 @@ if (os.path.isfile(oldScanPath)):
 if debug:
     print("Scanning {}".format(monitorPath))
 files = []
-for file in glob.iglob(monitorPath + '**/**', recursive=True):
-    if os.path.isfile(file) and file != oldScanPath:
+for file in glob.iglob(monitorPath + '/**/**', recursive=True):
+    if os.path.isfile(file) and (not any(ext in file for ext in exclude)) and file != oldScanPath: 
+        print(file)
         files.append([file[len(monitorPath)+1:],str(os.path.getmtime(file))])
+files = [i for n, i in enumerate(files) if i not in files[:n]] 
 if debug:
     print("Found Files:\n{}".format(files))
 
@@ -108,7 +111,7 @@ for file in files:
         modifiedFiles.append(file)
 
 if debug:
-    print("Detected modified Files:\n".format(modifiedFiles))
+    print("Detected modified Files:\n{}".format(modifiedFiles))
 
 with open(oldScanPath,"w") as f:
     f.write("\n".join([",".join(x) for x in files]))
