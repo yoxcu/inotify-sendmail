@@ -26,14 +26,24 @@ text = """\
 Es wurden {number} neue oder geänderte Dateien gefunden:
 Datei                    \tÄnderungsdatum
 {files}"""
-html = ""
-
+html = """\
+<html>
+    <body>
+        <h2>Found <b>{number}</b> Files </h2>
+        <table>
+            {files}
+        </table>
+    </body>
+</html>"""
 #per "row" formatting
 txtRowFormat="{filename:<25}\t{timestamp}"
-htmlRowFormat="{filename:<25}\t{timestamp}"
+htmlRowFormat="""<tr>
+<td>{filename:}</td>
+<td>{timestamp}</td>
+</tr>"""
 
 #misc settings
-debug=False
+debug=True
 sendMailOnFirst=False
 
 #Do Not Modify
