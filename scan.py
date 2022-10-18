@@ -35,6 +35,7 @@ html = """\
         </table>
     </body>
 </html>"""
+
 #per "row" formatting
 txtRowFormat="{filename:<25}\t{timestamp}"
 htmlRowFormat="""<tr>
@@ -96,7 +97,7 @@ if debug:
     print("Scanning {}".format(monitorPath))
 files = []
 for file in glob.iglob(monitorPath + '**/**', recursive=True):
-    if file != monitorPath and file != oldScanPath:
+    if os.path.isfile(file) and file != oldScanPath:
         files.append([file[len(monitorPath)+1:],str(os.path.getmtime(file))])
 if debug:
     print("Found Files:\n{}".format(files))
