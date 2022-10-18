@@ -33,7 +33,7 @@ txtRowFormat="{filename:<25}\t{timestamp}"
 htmlRowFormat="{filename:<25}\t{timestamp}"
 
 #misc settings
-debug=True
+debug=False
 sendMailOnFirst=False
 
 #Do Not Modify
