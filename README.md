@@ -12,7 +12,9 @@ apt-get install inotify-tools swaks
 edit `sendmail.sh` to your email providers setting, modify Subject and --to as well.
 
 ## execute to monitor
-`monitor.sh /path/to/monitor`
+`´´
+monitor.sh /path/to/monitor
+´´`
 
 # usage of scan.py
 
@@ -21,4 +23,6 @@ edit `sendmail.sh` to your email providers setting, modify Subject and --to as w
 - adjust email settings and formatting
 
 ## execute to scan once (use any sheduler to monitor)
-`python3 scan.py /path/to/scan`
+`´´
+python3 scan.py /path/to/scan
+´´`
