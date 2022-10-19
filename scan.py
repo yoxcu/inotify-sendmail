@@ -21,6 +21,7 @@ receiver_email = "user@domain.de"
 password = 'passwort'
 
 #email content
+from_txt = ""
 subject="Neue oder veränderte Dateien gefunden"
 text = """\
 Es wurden {number} neue oder geänderte Dateien gefunden:
@@ -36,12 +37,15 @@ html = """\
     </body>
 </html>"""
 
-#per "row" formatting
+#Formatting
 txtRowFormat="{filename:<25}\t{timestamp}"
+txtColumnSpacer="\n"
 htmlRowFormat="""<tr>
 <td>{filename:}</td>
 <td>{timestamp}</td>
 </tr>"""
+htmlColumnSpacer="\n"
+timeStampFormat='%Y-%m-%d %H:%M:%S'
 
 #misc settings
 debug=False
@@ -61,7 +65,10 @@ from datetime import datetime
 def send_mail(text,html):
     message = MIMEMultipart("alternative")
     message["Subject"] = subject
-    message["From"] = sender_email
+    from_temp=sender_email
+    if from_txt != "":
+        from_temp = '{} <{}>'.format(from_txt,sender_email)
+    message["From"] = from_temp
     message["To"] = receiver_email
 
     part1 = MIMEText(text, "plain", "utf-8")
@@ -99,7 +106,6 @@ if debug:
 files = []
 for file in glob.iglob(monitorPath + '/**/**', recursive=True):
     if os.path.isfile(file) and (not any(ext in file for ext in exclude)) and file != oldScanPath: 
-        print(file)
         files.append([file[len(monitorPath)+1:],str(os.path.getmtime(file))])
 files = [i for n, i in enumerate(files) if i not in files[:n]] 
 if debug:
@@ -119,8 +125,8 @@ with open(oldScanPath,"w") as f:
 if len(modifiedFiles) >= 1:
     if debug:
         print("Preparing Mail:")
-    msg=text.format(number=len(modifiedFiles),files="\n".join([txtRowFormat.format(filename=x[0],timestamp=datetime.fromtimestamp(float(x[1])).strftime('%Y-%m-%d %H:%M:%S'))  for x in modifiedFiles]))
-    msgHtml=html.format(number=len(modifiedFiles),files="\n".join([htmlRowFormat.format(filename=x[0],timestamp=datetime.fromtimestamp(float(x[1])).strftime('%Y-%m-%d %H:%M:%S'))  for x in modifiedFiles]))
+    msg=text.format(number=len(modifiedFiles),files=txtColumnSpacer.join([txtRowFormat.format(filename=x[0],timestamp=datetime.fromtimestamp(float(x[1])).strftime(timeStampFormat))  for x in modifiedFiles]))
+    msgHtml=html.format(number=len(modifiedFiles),files=htmlColumnSpacer.join([htmlRowFormat.format(filename=x[0],timestamp=datetime.fromtimestamp(float(x[1])).strftime(timeStampFormat))  for x in modifiedFiles]))
     if debug:
         print(msg,msgHtml)
     if sendMailOnFirst:
